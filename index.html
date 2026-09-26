@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roleta da conversa familiar</title>
+<style>
+:root{
+--kimi-font-sans:ui-sans-serif,system-ui,"Segoe UI",Roboto,Arial,sans-serif;
+--kimi-color-text-primary:#1a1a1a;--kimi-color-text-secondary:#444;
+--kimi-color-text-tertiary:#777;--kimi-color-text-quaternary:#999;
+--kimi-color-surface:#fff;--kimi-color-border:#ddd;
+--kimi-color-danger:#d64545;--kimi-color-accent:#3b6fd4;
+--t-fast:120ms;--t-slow:280ms;--ease-out:cubic-bezier(.2,.8,.3,1);
+}
+@media (prefers-color-scheme:dark){
+:root{--kimi-color-text-primary:#eee;--kimi-color-text-secondary:#ccc;
+--kimi-color-text-tertiary:#999;--kimi-color-text-quaternary:#666;
+--kimi-color-surface:#1c1c1e;--kimi-color-border:#3a3a3c;--kimi-color-danger:#ff6b6b;
+--kimi-color-accent:#6b9bff}
+}
+body{margin:0;padding:24px;background:#fafafa;font-size:16px}
+@media (prefers-color-scheme:dark){body{background:#111}}
+.rl-wrap{max-width:640px;margin:0 auto}
+</style>
+</head>
+<body>
+<div class="rl-wrap">
+<div class="rl-wrap">
+<style>
+.rl-wrap{font-family:var(--kimi-font-sans);color:var(--kimi-color-text-primary);width:100%}
+.rl-wrap button,.rl-wrap input,.rl-wrap select,.rl-wrap textarea{font:inherit}
+.rl-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.rl-title{font-size:17px;font-weight:500}
+.rl-stats{font-size:12px;color:var(--kimi-color-text-tertiary)}
+.rl-icobtn{width:32px;height:32px;border-radius:8px;border:1px solid var(--kimi-color-border);background:transparent;color:var(--kimi-color-text-secondary);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all var(--t-fast) var(--ease-out)}
+.rl-icobtn:hover{color:var(--kimi-color-text-primary);border-color:var(--kimi-color-text-tertiary)}
+.rl-icobtn svg{width:16px;height:16px}
+.rl-card{border:1px solid var(--kimi-color-border);border-radius:12px;padding:20px;min-height:150px;display:flex;flex-direction:column;gap:8px;justify-content:center;transition:border-color var(--t-fast) var(--ease-out)}
+.rl-card.pop{animation:rlpop var(--t-slow) var(--ease-out)}
+@keyframes rlpop{0%{transform:scale(.96);border-color:var(--kimi-color-text-primary)}100%{transform:scale(1)}}
+.rl-cycling .rl-q{color:var(--kimi-color-text-tertiary)}
+.rl-chip{align-self:flex-start;font-size:12px;padding:2px 8px;border-radius:6px;background:color-mix(in srgb,var(--kimi-color-accent) 12%,transparent);color:var(--kimi-color-text-primary)}
+.rl-q{font-size:17px;font-weight:500;line-height:1.4;margin:0}
+.rl-meta{font-size:12px;color:var(--kimi-color-text-tertiary);font-variant-numeric:tabular-nums}
+.rl-meta b{color:var(--kimi-color-text-secondary);font-weight:500}
+.rl-actions{display:flex;gap:8px;margin-top:12px}
+.rl-btn{border:1px solid var(--kimi-color-border);background:transparent;color:var(--kimi-color-text-primary);border-radius:8px;padding:8px 16px;font-size:14px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all var(--t-fast) var(--ease-out)}
+.rl-btn:hover{border-color:var(--kimi-color-text-primary)}
+.rl-btn.primary{background:var(--kimi-color-text-primary);color:var(--kimi-color-surface);border-color:var(--kimi-color-text-primary)}
+.rl-btn.primary:hover{opacity:.85}
+.rl-btn svg{width:16px;height:16px}
+.rl-btn:disabled{opacity:.4;cursor:default}
+.rl-cardacts{display:flex;gap:4px;margin-top:8px}
+.rl-mini{width:28px;height:28px;border-radius:8px;border:1px solid var(--kimi-color-border);background:transparent;color:var(--kimi-color-text-secondary);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all var(--t-fast) var(--ease-out)}
+.rl-mini:hover{color:var(--kimi-color-text-primary);border-color:var(--kimi-color-text-tertiary)}
+.rl-mini svg{width:14px;height:14px}
+.rl-mini.danger:hover{color:var(--kimi-color-danger);border-color:var(--kimi-color-danger)}
+.rl-edit textarea{width:100%;min-height:72px;border:1px solid var(--kimi-color-border);border-radius:10px;padding:8px 12px;font-size:15px;resize:vertical;background:var(--kimi-color-surface);color:var(--kimi-color-text-primary)}
+.rl-editrow{display:flex;gap:8px;margin-top:8px}
+.rl-add{border:1px solid var(--kimi-color-border);border-radius:12px;padding:16px;margin-top:16px;display:flex;flex-direction:column;gap:8px}
+.rl-add label{font-size:12px;color:var(--kimi-color-text-tertiary)}
+.rl-add select,.rl-add textarea{width:100%;border:1px solid var(--kimi-color-border);border-radius:10px;padding:8px 12px;font-size:14px;background:var(--kimi-color-surface);color:var(--kimi-color-text-primary)}
+.rl-add textarea{min-height:56px;resize:vertical}
+details.rl-list{margin-top:16px;border:1px solid var(--kimi-color-border);border-radius:12px}
+details.rl-list summary{cursor:pointer;padding:12px 16px;font-size:14px;font-weight:500;list-style:none;display:flex;align-items:center;justify-content:space-between}
+details.rl-list summary::-webkit-details-marker{display:none}
+details.rl-list summary::after{content:"\25BE";color:var(--kimi-color-text-tertiary);transition:transform var(--t-fast) var(--ease-out)}
+details.rl-list[open] summary::after{transform:rotate(180deg)}
+.rl-listbody{border-top:1px solid var(--kimi-color-border);padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.rl-listbody select{border:1px solid var(--kimi-color-border);border-radius:8px;padding:6px 10px;font-size:13px;background:var(--kimi-color-surface);color:var(--kimi-color-text-primary)}
+.rl-row{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid color-mix(in srgb,var(--kimi-color-border) 50%,transparent)}
+.rl-row:last-child{border-bottom:none}
+.rl-rowtxt{flex:1;font-size:13px;line-height:1.45;color:var(--kimi-color-text-secondary)}
+.rl-rowtxt .cat{display:block;font-size:11px;color:var(--kimi-color-text-quaternary);margin-bottom:2px}
+.rl-rowtxt.read{color:var(--kimi-color-text-quaternary)}
+.rl-chance{font-size:11px;color:var(--kimi-color-text-tertiary);white-space:nowrap;font-variant-numeric:tabular-nums;padding-top:2px}
+.rl-rowacts{display:flex;gap:4px;opacity:0;transition:opacity var(--t-fast) var(--ease-out)}
+.rl-row:hover .rl-rowacts,.rl-row:focus-within .rl-rowacts{opacity:1}
+.rl-empty{font-size:14px;color:var(--kimi-color-text-tertiary);text-align:center}
+.rl-rules-btn{border:1px solid var(--kimi-color-border);background:transparent;color:var(--kimi-color-text-primary);border-radius:8px;padding:6px 12px;font-size:13px;font-weight:500;cursor:pointer;transition:all var(--t-fast) var(--ease-out)}
+.rl-rules-btn:hover{border-color:var(--kimi-color-text-primary)}
+.rl-modal{position:fixed;inset:0;background:color-mix(in srgb,#000 45%,transparent);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
+.rl-modal.open{display:flex}
+.rl-modalbox{background:var(--kimi-color-surface);border:1px solid var(--kimi-color-border);border-radius:12px;max-width:560px;width:100%;max-height:80vh;overflow:auto;padding:20px}
+.rl-modalbox h2{font-size:17px;font-weight:500;margin:0 0 12px;display:flex;align-items:center;justify-content:space-between}
+.rl-modalbox h3{font-size:14px;font-weight:500;margin:14px 0 4px}
+.rl-modalbox p,.rl-modalbox li{font-size:13px;line-height:1.55;color:var(--kimi-color-text-secondary)}
+.rl-modalbox ul{margin:4px 0;padding-left:18px}
+.rl-modalbox .destaque{border:1px solid var(--kimi-color-border);border-radius:10px;padding:10px 12px;margin-top:12px;font-size:13px;line-height:1.55;color:var(--kimi-color-text-secondary);font-style:italic}
+</style>
+
+<div class="rl-hd">
+  <div>
+    <div class="rl-title">Roleta da conversa familiar</div>
+    <div class="rl-stats" id="rlStats"></div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+  <button class="rl-rules-btn" id="rlRulesBtn">Regras</button>
+  <button class="rl-icobtn" id="rlReset" title="Reiniciar tudo (cartões voltam a ter chance igual)">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M6.88048 6.89231C9.69226 4.08054 14.251 4.08054 17.0628 6.89231L16.2364 7.71871C15.7324 8.22268 16.0894 9.0844 16.8021 9.0844H19.7276C20.1694 9.0844 20.5276 8.72623 20.5276 8.2844V5.35891C20.5276 4.64619 19.6659 4.28926 19.1619 4.79323L18.3356 5.61952C14.8209 2.1048 9.12241 2.1048 5.60769 5.61952C2.09297 9.13424 2.09297 14.8327 5.60769 18.3474C9.12241 21.8622 14.8209 21.8622 18.3356 18.3474C19.4929 17.1902 20.2703 15.7937 20.6655 14.3163C20.7939 13.8361 20.5087 13.3428 20.0285 13.2143C19.5483 13.0859 19.055 13.3711 18.9266 13.8513C18.611 15.0314 17.9906 16.1469 17.0628 17.0746C14.251 19.8864 9.69226 19.8864 6.88048 17.0746C4.06871 14.2629 4.06871 9.70409 6.88048 6.89231Z" fill="currentColor"/></svg>
+  </button>
+  </div>
+</div>
+
+<div class="rl-card" id="rlCard"></div>
+<div class="rl-actions">
+  <button class="rl-btn primary" id="rlSpin">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M12.0684 2.03418C12.5654 2.03421 12.9687 2.43755 12.9688 2.93457V11.0996H21.0654C21.5625 11.0996 21.9658 11.503 21.9658 12C21.9658 12.497 21.5625 12.9004 21.0654 12.9004H12.9688V21.0654C12.9687 21.5624 12.5654 21.9658 12.0684 21.9658C11.5713 21.9658 11.168 21.5625 11.168 21.0654V12.9004H2.93457C2.43751 12.9004 2.03418 12.4971 2.03418 12C2.03418 11.5029 2.43751 11.0996 2.93457 11.0996H11.168V2.93457C11.168 2.43753 11.5713 2.03418 12.0684 2.03418Z" fill="currentColor"/></svg>
+    Girar roleta
+  </button>
+</div>
+
+<div class="rl-add">
+  <label>Novo cartão — escolha a categoria e escreva a pergunta</label>
+  <select id="rlNewCat"></select>
+  <textarea id="rlNewText" placeholder="Ex.: Qual palavra resume o melhor momento da semana em família?"></textarea>
+  <div><button class="rl-btn" id="rlAddBtn">Adicionar cartão</button></div>
+</div>
+
+<details class="rl-list">
+  <summary><span>Ver e gerenciar cartões</span></summary>
+  <div class="rl-listbody">
+    <select id="rlFilter"></select>
+    <div id="rlRows"></div>
+  </div>
+</details>
+</div>
+<div class="rl-modal" id="rlModal">
+  <div class="rl-modalbox">
+    <h2>Regras do jogo <button class="rl-icobtn" id="rlModalClose" title="Fechar"><svg viewBox="0 0 24 24" fill="none"><path d="M17.9542 4.77253C18.3056 4.42106 18.8761 4.42106 19.2276 4.77253C19.579 5.12401 19.579 5.69452 19.2276 6.04597L13.2735 12.0001L19.2276 17.9542C19.5791 18.3056 19.5791 18.8761 19.2276 19.2276C18.8761 19.5791 18.3056 19.5791 17.9542 19.2276L12.0001 13.2735L6.04595 19.2276C5.69451 19.5791 5.12399 19.579 4.77252 19.2276C4.42104 18.8761 4.42104 18.3056 4.77252 17.9542L10.7266 12.0001L4.77252 6.04597C4.42104 5.6945 4.42104 5.124 4.77252 4.77253C5.12399 4.42107 5.69448 4.42106 6.04595 4.77253L12.0001 10.7266L17.9542 4.77253Z" fill="currentColor"/></svg></button></h2>
+
+    <h3>Objetivo</h3>
+    <p>Conversar de verdade, conhecer melhor as opiniões e experiências uns dos outros, de forma leve e respeitosa. Não é terapia, não é julgamento e não é momento de "ajuste de contas".</p>
+
+    <h3>Como funciona</h3>
+    <ul>
+      <li>As perguntas são sorteadas aleatoriamente pela roleta. Quando uma pergunta cai, ela aparece como um "cartão".</li>
+      <li>Cartões já sorteados ficam com chance bem menor de cair de novo.</li>
+    </ul>
+
+    <h3>Formato de resposta</h3>
+    <ul>
+      <li>Cada pessoa responde primeiro com uma <b>palavra-chave</b> (a primeira que vier à cabeça).</li>
+      <li>Depois explica o porquê daquela palavra.</li>
+      <li>A palavra pode ser positiva, negativa ou neutra. O importante é entender o que a pessoa quer transmitir.</li>
+      <li>Não existe tempo máximo. Respeitamos o ritmo de cada um.</li>
+    </ul>
+
+    <h3>Perguntas extras</h3>
+    <p>Qualquer pessoa pode sugerir uma nova pergunta a qualquer momento. Se a família concordar, ela entra no jogo (use o campo "Novo cartão" do app).</p>
+
+    <h3>Foco no tema</h3>
+    <p>Tentamos ficar no assunto da pergunta. Se a conversa se alongar demais ou ficar pesada, podemos encerrar aquele tema e passar para o próximo.</p>
+
+    <h3>Temas complexos ou pesados</h3>
+    <p>Se algum tema parecer difícil demais naquele momento, ele é adiado e volta no próximo encontro (sábado ou domingo do mês seguinte).</p>
+
+    <h3>Abertura opcional do encontro</h3>
+    <p>No começo, alguém pergunta: <i>"Tem alguma coisa dessa semana que alguém gostaria de conversar com a família?"</i> Quem quiser fala. Quem não quiser, simplesmente passa. Não é obrigatório.</p>
+
+    <h3>O que pode e o que não pode ser falado</h3>
+    <ul>
+      <li>Falamos de coisas que afetam a convivência, a rotina ou o clima da casa.</li>
+      <li>Escolhas pessoais de cada um (religião, amigos, vida privada adulta, decisões individuais que não interferem diretamente na rotina familiar) ficam de fora, a menos que a própria pessoa queira trazer o assunto.</li>
+      <li>Não usamos o jogo para cobrar ou criticar atitudes pessoais que não afetam o coletivo.</li>
+    </ul>
+
+    <h3>Regra da "poeira baixar"</h3>
+    <p>Assuntos que geraram discussão no mesmo dia ou no dia anterior não entram no jogo. Esperamos a poeira abaixar.</p>
+
+    <h3>Se alguém não concordar com alguma pergunta</h3>
+    <p>Pode avisar. A gente conversa o motivo e, se fizer sentido, a pergunta é retirada (use o botão de remover do app).</p>
+
+    <div class="destaque">"Hoje a gente vai sortear perguntas. Cada um responde primeiro com uma palavra, depois explica. Respeitamos o tempo de cada pessoa e tentamos ficar no tema. Se algum assunto ficar pesado, a gente adia. No começo tem um espaço aberto para quem quiser falar de alguma coisa da semana, mas ninguém é obrigado. E lembrando: não falamos de escolhas pessoais de ninguém, só do que afeta a gente como família."</div>
+  </div>
+</div>
+</div>
+<script>
+const D=[
+["Família e convivência",[
+"Quando pensam no clima da casa com todo mundo junto, qual é a primeira palavra que vem?",
+"Qual palavra resume melhor aquela coisa pequena que alguém faz e deixa o ambiente mais bonito, gostoso, tranquilo?",
+"Se tivessem que descrever o \"jeito de ser\" da nossa família em uma só palavra, qual seria?",
+"Qual palavra representa o que a gente faz bem juntos e quase não percebe?",
+"Qual palavra resume a rotina ou hábito da casa que, se acabasse, faria mais falta?",
+"Qual palavra descreve a diferença entre estar sozinho em casa e estar com a família reunida?",
+"Se pudéssemos criar uma \"regra de ouro\" só nossa, qual palavra resumiria essa regra?",
+"Qual palavra representa o momento do dia ou da semana em que a família mais se conecta?",
+"Qual palavra resume o que mais surpreende no jeito que a gente se relaciona hoje?",
+"Se alguém de fora observasse a nossa família por uma semana, qual palavra essa pessoa usaria primeiro?"]],
+["Infância e criação dos filhos",[
+"Qual palavra resume a memória mais forte que cada um tem da própria infância em casa (boa ou ruim)?",
+"Qual palavra representa o que os pais (ou avós) mais acertaram na criação?",
+"Qual palavra descreve algo que era comum na infância de vocês e hoje parece bem diferente?",
+"Qual palavra resume a brincadeira ou momento da infância que ainda faz sentido hoje?",
+"Qual palavra representa o que uma criança mais precisa receber em casa?",
+"Se pudessem voltar e falar com o \"eu criança\", qual palavra resumiria o que diriam?",
+"Qual palavra descreve a maior diferença entre a infância de vocês e a de quem é mais novo?",
+"Qual palavra resume o valor ou lição da infância que ainda aparece no jeito de viver de vocês?",
+"Qual palavra resume o que mais mudou no jeito de criar filhos de uma geração para a outra?",
+"Qual palavra descreve o que vocês mais gostariam de recuperar da infância em casa?"]],
+["Pais e filhos",[
+"Qual palavra resume o que cada um aprendeu com o pai ou com a mãe sem que eles precisassem explicar?",
+"Qual palavra representa a frase ou atitude dos pais que mais ficou marcada?",
+"Qual palavra descreve a maior diferença de jeito entre pai e mãe na hora de educar ou conversar?",
+"Qual palavra resume o que os filhos entendem melhor sobre os pais quando ficam adultos?",
+"Se pudessem fazer uma pergunta sincera para o pai ou a mãe de quando eram jovens, qual palavra resumiria essa pergunta?",
+"Qual palavra representa o momento mais importante entre pais e filhos na história da família?",
+"Qual palavra descreve o que mudou na relação de vocês com os pais (ou com os filhos) depois que todo mundo cresceu?",
+"Qual palavra resume algo que os pais faziam e que os filhos repetem sem perceber?",
+"Qual palavra representa o papel de \"cuidar\" na relação entre pais e filhos ao longo da vida?",
+"Qual palavra resume o que os filhos mais admiram nos pais, mesmo que quase nunca falem?"]],
+["Comunicação",[
+"Qual palavra resume as situações em que a conversa flui mais fácil na família?",
+"Qual palavra representa o que mais ajuda alguém a se sentir realmente ouvido em casa?",
+"Qual palavra descreve um assunto que a gente quase nunca aborda e que talvez merecesse mais espaço?",
+"Qual palavra resume o jeito que cada um prefere ser abordado quando o assunto é importante?",
+"Qual palavra representa a diferença entre conversar com muita gente e conversar só a dois?",
+"Qual palavra descreve o jeito mais natural de alguém da família mostrar que está prestando atenção?",
+"Qual palavra resume uma conversa antiga que ainda faz sentido hoje?",
+"Qual palavra representa o que mais atrapalha a comunicação em casa sem a gente perceber?",
+"Se pudéssemos melhorar só uma coisa na forma de conversar, qual palavra resumiria essa melhoria?",
+"Qual palavra descreve a maior diferença de comunicação entre as gerações da família?"]],
+["Afeto e demonstração de carinho",[
+"Qual palavra resume o jeito que cada um costuma mostrar carinho sem precisar falar?",
+"Qual palavra representa o gesto simples de afeto que mais faz diferença no dia a dia?",
+"Qual palavra descreve uma forma de carinho que era comum antigamente e hoje quase sumiu?",
+"Qual palavra resume o que faz alguém se sentir realmente querido dentro de casa?",
+"Qual palavra representa a diferença entre demonstrar carinho com palavras e com atitudes?",
+"Qual palavra resume a memória de carinho familiar que ainda aquece quando pensam nela?",
+"Qual palavra descreve o que a nossa família faz bem na hora de cuidar uns dos outros?",
+"Qual palavra representa um jeito de demonstrar afeto que vocês gostariam de ver mais?",
+"Qual palavra resume como o carinho muda de uma geração para a outra na família?",
+"Qual palavra descreveria o \"estilo de carinho\" da nossa família?"]],
+["Conflitos e diferenças de opinião",[
+"Qual palavra resume o jeito que a nossa família costuma lidar quando as opiniões são bem diferentes?",
+"Qual palavra representa o que mais ajuda a conversa a não esquentar demais?",
+"Qual palavra descreve uma diferença de opinião antiga que ainda aparece de vez em quando?",
+"Qual palavra resume o que vocês aprenderam com os conflitos que a família já atravessou?",
+"Qual palavra representa a reação de cada um quando sente que não foi compreendido?",
+"Qual palavra descreve a diferença entre discutir e conversar de verdade na nossa casa?",
+"Qual palavra resume um assunto em que a família consegue discordar e ainda manter o respeito?",
+"Qual palavra representa o que faz uma diferença de opinião se transformar em aprendizado?",
+"Qual palavra descreve a maior diferença no jeito de lidar com conflitos entre as gerações?",
+"Se pudéssemos escolher uma forma melhor de resolver divergências, qual palavra resumiria essa forma?"]],
+["Personalidade e diferenças entre familiares",[
+"Qual palavra resume a diferença de personalidade mais marcante entre as pessoas da família?",
+"Qual palavra representa o que cada um mais admira no jeito de ser de outra pessoa da casa?",
+"Qual palavra descreve uma característica que se repete em várias pessoas da família?",
+"Qual palavra resume como as diferenças de temperamento se complementam no dia a dia?",
+"Qual palavra representa a maior diferença de personalidade entre as gerações?",
+"Qual palavra descreve o que cada um traz de único para a dinâmica da família?",
+"Qual palavra resume uma qualidade de alguém que só aparece quando a pessoa está à vontade em casa?",
+"Qual palavra representa como as diferenças de jeito ajudam ou desafiam a convivência?",
+"Qual palavra descreveria a personalidade coletiva da nossa família?",
+"Qual palavra resume o que cada um aprendeu com o jeito diferente de ser dos outros?"]],
+["Mudanças ao longo dos anos",[
+"Qual palavra resume a mudança mais marcante que a família viveu nos últimos anos?",
+"Qual palavra representa o que ficou igual apesar de tudo que mudou?",
+"Qual palavra descreve como a casa e a rotina se transformaram de uma década para outra?",
+"Qual palavra resume a mudança que trouxe mais crescimento para a família?",
+"Qual palavra representa a fase da vida da família que vocês lembram com mais carinho?",
+"Qual palavra descreve o que a família perdeu e o que ganhou com o passar do tempo?",
+"Qual palavra resume como as responsabilidades de cada um mudaram conforme as pessoas cresceram?",
+"Qual palavra representa a mudança externa (trabalho, cidade, escola) que mais impactou a dinâmica de casa?",
+"Qual palavra descreve o que a família aprendeu a lidar melhor com o tempo?",
+"Se pudessem escolher uma mudança para viver de novo, qual palavra resumiria essa escolha?"]],
+["Memórias e histórias da família",[
+"Qual palavra resume a história da família que quase sempre volta nas conversas?",
+"Qual palavra representa uma memória que só algumas pessoas vivenciaram e que os outros gostariam de conhecer melhor?",
+"Qual palavra descreve a história mais engraçada que vocês se lembram de terem vivido juntos?",
+"Qual palavra resume a tradição ou momento especial que mais marca as memórias da família?",
+"Qual palavra representa a memória de infância ou juventude que ainda é vivida com emoção?",
+"Qual palavra descreve o que as histórias antigas da família revelam sobre o jeito de ser de vocês?",
+"Qual palavra resume a foto ou objeto que dispara logo uma história quando alguém vê?",
+"Qual palavra representa o momento da família que vocês consideram um marco importante?",
+"Qual palavra descreve como as histórias mudam conforme quem está contando?",
+"Se pudessem gravar uma história da família para as próximas gerações, qual palavra resumiria essa história?"]],["Dinheiro e relação com dinheiro",[
+"Qual palavra resume a relação de cada um com o dinheiro no dia a dia?",
+"Qual palavra representa o que vocês aprenderam sobre dinheiro observando a família?",
+"Qual palavra descreve a maior diferença na forma de lidar com dinheiro entre as gerações?",
+"Qual palavra resume a lição sobre dinheiro que mais ficou marcada e ainda faz sentido?",
+"Qual palavra representa como a conversa sobre dinheiro acontece (ou não acontece) em casa?",
+"Qual palavra descreve o que o dinheiro representa para cada um?",
+"Qual palavra resume a atitude em relação ao dinheiro que vocês mais admiram em alguém da família?",
+"Qual palavra representa a maior diferença entre a relação com dinheiro na época dos mais velhos e hoje?",
+"Qual palavra descreve o que a família faz bem e o que poderia melhorar na forma de falar sobre dinheiro?",
+"Se tivesse que ensinar uma criança da família sobre dinheiro, qual palavra resumiria o ponto de partida?"]],
+["Dívidas, dificuldades e consumo",[
+"Qual palavra resume o que a família já aprendeu passando por momentos de aperto financeiro?",
+"Qual palavra representa como cada um lida com a vontade de comprar versus a necessidade real?",
+"Qual palavra descreve a diferença entre gastar por impulso e gastar com consciência?",
+"Qual palavra resume uma dificuldade financeira do passado que ainda ensina alguma coisa hoje?",
+"Qual palavra representa como a forma de consumir mudou de uma geração para a outra?",
+"Qual palavra descreve o que mais ajuda a família a manter o equilíbrio quando o dinheiro aperta?",
+"Qual palavra resume a atitude em relação a dívidas ou gastos que vocês consideram mais saudável?",
+"Qual palavra representa como as conversas sobre dificuldades financeiras costumam acontecer em casa?",
+"Qual palavra descreve o que a sociedade de hoje incentiva no consumo e que a família precisa filtrar?",
+"Se pudessem mudar uma coisa na forma como a família lida com gastos, qual palavra resumiria essa mudança?"]],
+["Investimentos e futuro financeiro",[
+"Qual palavra resume como cada um pensa sobre o futuro financeiro da família?",
+"Qual palavra representa o que significa \"segurança financeira\" para vocês?",
+"Qual palavra descreve a diferença entre juntar dinheiro e fazer o dinheiro trabalhar?",
+"Qual palavra resume a maior diferença na forma de ver o patrimônio entre as gerações?",
+"Qual palavra representa a prioridade de cada um quando pensa em construir algo para o futuro?",
+"Qual palavra descreve uma decisão financeira do passado que ainda influencia o presente?",
+"Qual palavra resume como a família conversa (ou não) sobre planos de longo prazo com dinheiro?",
+"Qual palavra representa o que cada um gostaria de deixar de legado financeiro ou de valores em relação ao dinheiro?",
+"Qual palavra descreve o maior aprendizado que a família já teve sobre cuidar do que tem?",
+"Se a família pudesse planejar juntas uma coisa importante para o futuro, qual palavra resumiria esse plano?"]],
+["Trabalho e realização pessoal",[
+"Qual palavra resume o que o trabalho representa para cada um além de ganhar a vida?",
+"Qual palavra representa a maior diferença na forma de ver o trabalho entre as gerações?",
+"Qual palavra descreve o que faz alguém se sentir realizado no que faz?",
+"Qual palavra resume uma escolha profissional que marcou a história da família?",
+"Qual palavra representa como o trabalho de cada um influencia a rotina e o clima de casa?",
+"Qual palavra descreve o que vocês mais admiram no jeito de trabalhar de outra pessoa da família?",
+"Qual palavra resume o maior desafio profissional que alguém da família enfrentou?",
+"Qual palavra representa a maior diferença na relação com o trabalho entre a época dos mais velhos e hoje?",
+"Qual palavra descreve o que cada um considera mais importante: estabilidade, realização, reconhecimento ou outra coisa?",
+"Se pudessem dar um conselho profissional para alguém mais novo da família, qual palavra resumiria esse conselho?"]],
+["Alimentação e hábitos em casa",[
+"Qual palavra resume o papel da comida na convivência da nossa família?",
+"Qual palavra representa a refeição ou prato que carrega a memória afetiva mais forte?",
+"Qual palavra descreve como os hábitos alimentares mudaram de uma geração para a outra?",
+"Qual palavra resume o que torna uma refeição especial além da comida em si?",
+"Qual palavra representa o costume em relação à comida que vocês gostariam de manter ou recuperar?",
+"Qual palavra descreve como cada um contribui (ou não) para a alimentação da casa?",
+"Qual palavra resume uma diferença de gosto ou hábito alimentar que gera conversa interessante?",
+"Qual palavra representa o que a forma de comer juntos revela sobre a dinâmica da família?",
+"Qual palavra descreve a mudança nos hábitos alimentares da família que vocês consideram mais positiva?",
+"Se pudessem criar uma tradição nova em relação à comida, qual palavra resumiria essa tradição?"]],
+["Casa, rotina e responsabilidades",[
+"Qual palavra resume como a divisão de responsabilidades funciona (ou não funciona) em casa?",
+"Qual palavra representa o que cada um considera mais importante para a casa funcionar bem?",
+"Qual palavra descreve a parte da rotina diária que é mais gostosa e a que é mais pesada?",
+"Qual palavra resume como as responsabilidades mudaram conforme as pessoas cresceram ou saíram de casa?",
+"Qual palavra representa a tarefa de casa que ninguém gosta de fazer e que sempre gera conversa?",
+"Qual palavra descreve o que torna a casa um lugar realmente acolhedor para vocês?",
+"Qual palavra resume a mudança na rotina da casa que faria mais diferença no dia a dia?",
+"Qual palavra representa a maior diferença na organização da casa entre a geração dos mais velhos e hoje?",
+"Qual palavra descreve o que cada um sente que contribui de mais valioso para o funcionamento da casa?",
+"Se a família pudesse redesenhar a rotina de casa, qual palavra resumiria por onde começariam?"]],
+["Amor, casamento e relacionamentos",[
+"Qual palavra resume o que vocês observaram sobre relacionamentos olhando para a própria família?",
+"Qual palavra representa a maior diferença na forma de viver o amor e o casamento entre as gerações?",
+"Qual palavra descreve o que faz um relacionamento durar, na visão de cada um?",
+"Qual palavra resume a história de amor da família que ainda emociona quando é contada?",
+"Qual palavra representa como o jeito de namorar e de se relacionar mudou com o tempo?",
+"Qual palavra descreve o que cada um considera essencial para um relacionamento saudável?",
+"Qual palavra resume a lição sobre amor e companheirismo que a família já ensinou sem perceber?",
+"Qual palavra representa a maior diferença nas expectativas em relação ao casamento hoje?",
+"Qual palavra descreve o que vocês mais admiram no jeito de se relacionar de algum casal da família?",
+"Se pudessem dizer uma coisa importante sobre relacionamentos para alguém mais novo, qual palavra resumiria essa mensagem?"]],
+["Filhos e formar uma família",[
+"Qual palavra resume o que cada um imagina quando pensa em formar (ou ter formado) uma família?",
+"Qual palavra representa a expectativa sobre filhos que mais mudou de uma geração para a outra?",
+"Qual palavra descreve o que vocês consideram mais importante transmitir para os filhos?",
+"Qual palavra resume como a ideia de \"família ideal\" evoluiu na cabeça de vocês?",
+"Qual palavra representa uma expectativa antiga sobre filhos que hoje parece diferente?",
+"Qual palavra descreve o que a experiência de ser filho ensinou sobre a possibilidade de ser pai ou mãe?",
+"Qual palavra resume como as pressões ou liberdades em relação a ter filhos mudaram com o tempo?",
+"Qual palavra representa o que cada um gostaria que os filhos (ou sobrinhos, netos) levassem da família?",
+"Qual palavra descreve a maior diferença entre o que se esperava de uma família antigamente e o que se espera hoje?",
+"Se pudessem escolher uma coisa para priorizar na criação de uma nova geração, qual palavra resumiria essa prioridade?"]],
+["Amizade e relações sociais",[
+"Qual palavra resume o papel das amizades na vida de cada um da família?",
+"Qual palavra representa como as amizades mudaram de intensidade ou de forma com o passar dos anos?",
+"Qual palavra descreve o que faz uma amizade durar, na visão de vocês?",
+"Qual palavra resume uma amizade antiga que ainda influencia a vida de alguém da família?",
+"Qual palavra representa a maior diferença entre as amizades da infância, da juventude e da vida adulta?",
+"Qual palavra descreve como a família enxerga a importância de ter pessoas de confiança fora de casa?",
+"Qual palavra resume o que as amizades revelam sobre o jeito de ser de cada um?",
+"Qual palavra representa como a forma de fazer e manter amigos mudou com a tecnologia e com o tempo?",
+"Qual palavra descreve a qualidade que vocês mais valorizam em um amigo?",
+"Se pudessem apresentar um amigo importante para a família, qual palavra resumiria o que diriam sobre ele?"]],["Tecnologia e mudanças na sociedade",[
+"Qual palavra resume a mudança tecnológica que mais impactou a rotina da família?",
+"Qual palavra representa o que a tecnologia facilitou e o que complicou na convivência de casa?",
+"Qual palavra descreve a maior diferença na comunicação antes dos celulares e redes sociais e hoje?",
+"Qual palavra resume a maior diferença na forma de se informar e de se entreter entre as gerações?",
+"Qual palavra representa o que vocês sentem que se perdeu e o que se ganhou com o avanço da tecnologia?",
+"Qual palavra descreve como a tecnologia mudou a forma de trabalhar, estudar e se relacionar na família?",
+"Qual palavra resume um uso da tecnologia que a família considera positivo e outro que preocupa?",
+"Qual palavra representa a mudança na sociedade dos últimos anos que mais chamou a atenção de vocês?",
+"Qual palavra descreve como as crianças e os mais velhos vivem a tecnologia de formas diferentes?",
+"Se pudessem voltar a uma época com menos tecnologia por um tempo, qual palavra resumiria o que sentiriam falta e o que não sentiriam?"]],
+["Educação e criação",[
+"Qual palavra resume o que cada um considera o mais importante na educação de uma pessoa?",
+"Qual palavra representa a maior diferença na forma de educar entre as gerações da família?",
+"Qual palavra descreve o que a escola ensinou e o que a vida em casa ensinou de forma diferente?",
+"Qual palavra resume o valor ou lição da criação de vocês que ainda carrega mais peso hoje?",
+"Qual palavra representa como a educação formal e a educação de casa se complementam (ou se chocam)?",
+"Qual palavra descreve o que uma boa educação precisa incluir além de conteúdo escolar?",
+"Qual palavra resume uma abordagem educativa antiga que ainda faz sentido e outra que já não cabe mais?",
+"Qual palavra representa como as expectativas em relação aos estudos mudaram na família?",
+"Qual palavra descreve o que cada um aprendeu sobre educação observando os mais velhos e os mais novos?",
+"Se pudessem escolher uma coisa para priorizar na educação das próximas gerações, qual palavra resumiria essa escolha?"]],
+["Saúde e qualidade de vida",[
+"Qual palavra resume o que cada um considera essencial para ter qualidade de vida?",
+"Qual palavra representa como os hábitos de cuidado com o corpo e a mente mudaram na família?",
+"Qual palavra descreve a prática simples que mais ajuda a se sentir bem no dia a dia?",
+"Qual palavra resume o que a família já aprendeu sobre a importância de cuidar de si?",
+"Qual palavra representa como o ritmo de vida de hoje influencia a qualidade de vida de cada um?",
+"Qual palavra descreve a maior diferença na forma de ver saúde e bem-estar entre as gerações?",
+"Qual palavra resume o que mais ajuda alguém a se sentir com mais energia e disposição em casa?",
+"Qual palavra representa um hábito de qualidade de vida que a família poderia cultivar mais juntas?",
+"Qual palavra descreve como o descanso e o lazer entram na rotina de cada um?",
+"Se pudessem melhorar uma coisa na qualidade de vida da família, qual palavra resumiria por onde começariam?"]],
+["Religião e espiritualidade",[
+"Qual palavra resume o papel da fé ou da espiritualidade na vida de cada um (se houver)?",
+"Qual palavra representa como a relação com a religião ou com o sagrado mudou de uma geração para a outra?",
+"Qual palavra descreve o que cada um busca quando pensa em sentido maior ou em algo que transcende o cotidiano?",
+"Qual palavra resume uma prática, ritual ou momento de silêncio que faz sentido para alguém da família?",
+"Qual palavra representa como a família lida com as diferentes formas de viver a fé ou a ausência dela?",
+"Qual palavra descreve o que a espiritualidade (ou a falta dela) ensina sobre a vida, na visão de vocês?",
+"Qual palavra resume o valor ou atitude ligada à espiritualidade que vocês consideram importante preservar?",
+"Qual palavra representa como as conversas sobre fé acontecem (ou não acontecem) em casa?",
+"Qual palavra descreve o que cada um sente que a espiritualidade pode oferecer em momentos difíceis ou de gratidão?",
+"Qual palavra descreveria a \"atmosfera espiritual\" da família?"]],
+["Valores pessoais",[
+"Qual palavra resume o valor que cada um considera inegociável na própria vida?",
+"Qual palavra representa o que a família transmitiu de mais importante em termos de valores?",
+"Qual palavra descreve o valor que se repete em várias pessoas da casa?",
+"Qual palavra resume como os valores de cada um se formaram ao longo do tempo?",
+"Qual palavra representa um valor antigo que ainda faz total sentido e outro que precisou ser repensado?",
+"Qual palavra descreve o que cada um mais admira nos valores de outra pessoa da família?",
+"Qual palavra resume como os valores influenciam as decisões do dia a dia?",
+"Qual palavra representa a maior diferença de valores entre as gerações?",
+"Qual palavra descreve o que vocês gostariam que as próximas gerações carregassem como valor central?",
+"Se tivesse que escolher um valor para representar a família, qual palavra seria?"]],
+["Ética e decisões difíceis",[
+"Qual palavra resume como cada um costuma decidir quando está diante de uma escolha difícil?",
+"Qual palavra representa o que mais ajuda a manter a coerência entre o que se acredita e o que se faz?",
+"Qual palavra descreve uma decisão difícil do passado que ainda ensina alguma coisa?",
+"Qual palavra resume a diferença entre fazer o que é fácil e fazer o que se considera certo?",
+"Qual palavra representa como a família lida com situações em que os valores de cada um se chocam?",
+"Qual palavra descreve o que vocês consideram mais importante na hora de tomar uma decisão ética?",
+"Qual palavra resume uma história da família em que alguém precisou escolher entre caminhos complicados?",
+"Qual palavra representa como a forma de decidir mudou com a maturidade e com o tempo?",
+"Qual palavra descreve o que cada um aprendeu sobre responsabilidade pelas próprias escolhas?",
+"Se pudessem aconselhar alguém da família diante de uma decisão difícil, qual palavra resumiria o primeiro ponto a considerar?"]],
+["Sociedade e mudanças no mundo",[
+"Qual palavra resume a mudança no mundo dos últimos anos que mais chamou a atenção de vocês?",
+"Qual palavra representa o que a família sente que melhorou e o que piorou na sociedade?",
+"Qual palavra descreve como as gerações veem de forma diferente os problemas e as oportunidades do mundo atual?",
+"Qual palavra resume o valor ou atitude social que vocês consideram importante defender?",
+"Qual palavra representa o que a forma de viver da família revela sobre a época em que cada um cresceu?",
+"Qual palavra descreve como as notícias e os acontecimentos do mundo entram (ou não) nas conversas de casa?",
+"Qual palavra resume a mudança social que vocês gostariam de ver acontecer nas próximas décadas?",
+"Qual palavra representa o que cada um sente que a sociedade de hoje exige das pessoas?",
+"Qual palavra descreve como a família se posiciona diante de mudanças grandes no mundo?",
+"Se pudessem escolher uma coisa boa do passado para trazer de volta à sociedade atual, qual palavra resumiria essa escolha?"]],
+["Liberdade, responsabilidade e escolhas",[
+"Qual palavra resume o que liberdade significa para cada um na prática?",
+"Qual palavra representa como a responsabilidade cresce junto com a liberdade ao longo da vida?",
+"Qual palavra descreve a escolha importante que cada um já fez e que ainda carrega consequências?",
+"Qual palavra resume o que a família ensinou sobre assumir as próprias decisões?",
+"Qual palavra representa o equilíbrio entre liberdade e limites de uma geração para a outra?",
+"Qual palavra descreve a maior liberdade que cada um sente ter conquistado?",
+"Qual palavra resume o que dificulta ou facilita fazer escolhas conscientes no dia a dia?",
+"Qual palavra representa uma escolha que a família fez junta e que marcou a trajetória de todos?",
+"Qual palavra descreve como cada um lida com as consequências das próprias escolhas?",
+"Se pudessem voltar e refazer uma escolha importante, qual palavra resumiria o que fariam diferente?"]],
+["Envelhecimento e passagem do tempo",[
+"Qual palavra resume como cada um sente a passagem do tempo na própria vida e na vida da família?",
+"Qual palavra representa o que muda na forma de ver a vida conforme os anos passam?",
+"Qual palavra descreve a maior diferença entre a visão de mundo de quem é mais jovem e de quem já viveu mais?",
+"Qual palavra resume o que vocês consideram mais valioso na experiência de envelhecer?",
+"Qual palavra representa alguma coisa que só se entende melhor com o tempo?",
+"Qual palavra descreve como a família cuida (ou poderia cuidar melhor) das diferentes fases da vida?",
+"Qual palavra resume o que os mais velhos gostariam que os mais novos soubessem sobre o tempo que passa?",
+"Qual palavra representa a memória do tempo passando que ainda emociona quando é lembrada?",
+"Qual palavra descreve como a relação com o corpo, com a energia e com os planos muda ao longo da vida?",
+"Se pudessem dizer uma coisa sobre a passagem do tempo para alguém bem jovem da família, qual palavra resumiria essa mensagem?"]],["Futuro da família",[
+"Qual palavra resume como cada um imagina a família daqui a dez ou vinte anos?",
+"Qual palavra representa o que gostariam que permanecesse igual no futuro da família?",
+"Qual palavra descreve o maior desejo de cada um para o futuro coletivo?",
+"Qual palavra resume o que a família precisa cultivar hoje para chegar bem no futuro?",
+"Qual palavra representa a maior diferença na forma de ver o futuro entre as gerações?",
+"Qual palavra descreve um plano ou sonho coletivo que a família ainda não conversou direito?",
+"Qual palavra resume o que cada um gostaria de deixar como contribuição para as próximas gerações?",
+"Qual palavra representa o desafio do futuro que a família já começa a sentir ou a imaginar?",
+"Qual palavra descreve como manter a conexão familiar mesmo com as mudanças naturais da vida?",
+"Se pudessem escolher uma palavra para descrever o futuro desejado da família, qual seria?"]],
+["Medos e preocupações",[
+"Qual palavra resume a preocupação mais comum que aparece na cabeça de cada um no dia a dia?",
+"Qual palavra representa como a família lida com os medos e as incertezas de cada um?",
+"Qual palavra descreve o que mais ajuda a acalmar quando surge uma preocupação maior?",
+"Qual palavra resume o medo ou preocupação que mudou de intensidade com o tempo?",
+"Qual palavra representa a maior diferença de medos sobre a vida entre as gerações?",
+"Qual palavra descreve o que a família já enfrentou juntas e que ensinou algo sobre lidar com o medo?",
+"Qual palavra resume uma preocupação que quase nunca é falada e que talvez merecesse espaço?",
+"Qual palavra representa o que cada um faz para não deixar as preocupações tomarem conta demais?",
+"Qual palavra descreve como o apoio da família ajuda (ou poderia ajudar mais) nos momentos de insegurança?",
+"Se pudessem transformar um medo em aprendizado, qual palavra resumiria o primeiro passo?"]],
+["Sonhos, objetivos e planos",[
+"Qual palavra resume o sonho que cada um ainda carrega, mesmo que pequeno?",
+"Qual palavra representa o que mais ajuda a transformar um sonho em plano concreto?",
+"Qual palavra descreve um objetivo antigo que ainda faz sentido e outro que já mudou?",
+"Qual palavra resume a maior diferença nos sonhos de cada geração?",
+"Qual palavra representa o que a família já realizou juntas e que começou como um sonho?",
+"Qual palavra descreve o maior sonho que cada um tem para si e para a família?",
+"Qual palavra resume o que mais atrapalha e o que mais impulsiona na hora de perseguir um objetivo?",
+"Qual palavra representa como os planos de vida mudaram conforme as responsabilidades aumentaram?",
+"Qual palavra descreve um sonho que a família poderia apoiar mais umas às outras?",
+"Se pudessem escolher um sonho para realizar juntos nos próximos anos, qual palavra resumiria esse sonho?"]],
+["O que as gerações aprendem",[
+"Qual palavra resume o que os mais velhos sentem que aprenderam com os mais novos?",
+"Qual palavra representa o que os mais novos reconhecem ter aprendido com os mais velhos?",
+"Qual palavra descreve a lição de uma geração que ainda é útil para a outra hoje?",
+"Qual palavra resume como o olhar de cada geração completa o da outra?",
+"Qual palavra representa alguma coisa que só os mais velhos conseguem ensinar pela experiência?",
+"Qual palavra descreve alguma coisa que só os mais novos conseguem mostrar por viverem outra época?",
+"Qual palavra resume o que cada geração mais admira na outra?",
+"Qual palavra representa uma conversa entre gerações que já gerou um insight importante?",
+"Qual palavra descreve como a troca entre gerações fortalece a família?",
+"Se cada geração pudesse deixar um legado de aprendizado para a outra, qual palavra resumiria esse legado?"]],
+["Assuntos do dia a dia",[
+"Qual palavra resume aquela coisa pequena do dia a dia que quase ninguém comenta, mas que faz diferença?",
+"Qual palavra representa o que cada um pensa enquanto faz as tarefas mais repetitivas de casa?",
+"Qual palavra descreve um hábito silencioso de alguém que os outros nunca perguntaram o porquê?",
+"Qual palavra resume o momento do dia que cada um mais gosta, mesmo que seja simples?",
+"Qual palavra representa o que passa pela cabeça de cada um quando a casa está em silêncio?",
+"Qual palavra descreve uma preferência ou mania cotidiana que nunca foi realmente explicada?",
+"Qual palavra resume como cada um se sente nos momentos de transição do dia (acordar, voltar do trabalho, antes de dormir)?",
+"Qual palavra representa o detalhe da rotina de outra pessoa da família que mais chama a atenção?",
+"Qual palavra descreve o que cada um faria diferente no cotidiano se tivesse um pouco mais de tempo ou de energia?",
+"Se pudessem escolher um assunto \"sem importância\" para conversar com calma, qual palavra resumiria esse assunto?"]]
+];
+
+const KEY="roletaFamiliaV1";
+const W_UNREAD=99, W_READ=1;
+let uid=0, cards=[], current=null, spinning=false;
+
+function defaults(){const out=[];D.forEach(c=>c[1].forEach(q=>out.push({id:uid++,cat:c[0],text:q,r:false})));return out;}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(cards));}catch(e){}}
+function load(){try{const s=localStorage.getItem(KEY);if(s){const a=JSON.parse(s);if(Array.isArray(a)&&a.length){a.forEach(c=>{if(c.id>=uid)uid=c.id+1;});return a;}}}catch(e){}return null;}
+cards=load()||defaults();
+
+const $=id=>document.getElementById(id);
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const weight=c=>c.r?W_READ:W_UNREAD;
+const totalW=()=>cards.reduce((s,c)=>s+weight(c),0);
+function chance(c){const t=totalW();return t?weight(c)/t:0;}
+function pct(c){return (chance(c)*100).toFixed(1).replace(".",",")+"%";}
+
+const IC_EDIT='<svg viewBox="0 0 24 24" fill="none"><path d="M18.0179 3.09998C18.3963 3.10003 18.7709 3.17491 19.1205 3.31971C19.4701 3.46454 19.7884 3.67614 20.056 3.94373C20.3237 4.21144 20.5362 4.52965 20.681 4.87928C20.8258 5.22887 20.8997 5.60423 20.8997 5.9828C20.8997 6.36118 20.8257 6.73591 20.681 7.08533C20.5362 7.43497 20.3237 7.75317 20.056 8.02088L17.639 10.4379L9.15756 18.9183C8.5296 19.5463 7.74274 19.992 6.8812 20.2074L4.21811 20.8734C3.91148 20.95 3.5871 20.8596 3.36362 20.6361C3.14017 20.4126 3.05063 20.0883 3.12729 19.7816L3.79233 17.1185C4.00771 16.257 4.45344 15.4701 5.08139 14.8422L15.9798 3.94373C16.5203 3.40346 17.2536 3.09998 18.0179 3.09998ZM19.0003 19.1C19.4972 19.1002 19.8997 19.5034 19.8997 20.0004C19.8995 20.4971 19.4971 20.8996 19.0003 20.8998H12.0003C11.5034 20.8998 11.1001 20.4973 11.0999 20.0004C11.0999 19.5033 11.5033 19.1 12.0003 19.1H19.0003ZM18.0179 4.89979C17.7309 4.89979 17.4553 5.01417 17.2523 5.21717L6.35385 16.1146C5.95661 16.5119 5.67469 17.01 5.53842 17.5551L5.23666 18.7631L6.44467 18.4613C6.98971 18.3251 7.48782 18.0431 7.8851 17.6459L18.7826 6.74744C18.883 6.64702 18.9635 6.52821 19.0179 6.39686C19.0723 6.26558 19.0999 6.1247 19.0999 5.9828C19.0999 5.84075 19.0723 5.69916 19.0179 5.56776C18.9635 5.43645 18.883 5.31757 18.7826 5.21717C18.6821 5.11678 18.5631 5.03716 18.432 4.9828C18.3008 4.92845 18.16 4.89983 18.0179 4.89979Z" fill="currentColor"/></svg>';
+const IC_MINUS='<svg viewBox="0 0 24 24" fill="none"><path d="M5.93457 11.0996H18.0654C18.5625 11.0996 18.9658 11.503 18.9658 12C18.9658 12.497 18.5625 12.9004 18.0654 12.9004H5.93457C5.43751 12.9004 5.03418 12.4971 5.03418 12C5.03418 11.5029 5.43751 11.0996 5.93457 11.0996Z" fill="currentColor"/></svg>';
+const IC_CHECK='<svg viewBox="0 0 24 24" fill="none"><path d="M19.3027 5.9053C19.6542 5.55397 20.2247 5.55388 20.5761 5.9053C20.9273 6.25675 20.9273 6.82734 20.5761 7.17874L9.65911 18.0948C9.30773 18.4461 8.73814 18.446 8.38665 18.0948L3.42376 13.1328C3.0726 12.7814 3.07263 12.2118 3.42376 11.8604C3.77524 11.509 4.34575 11.5089 4.6972 11.8604L9.02239 16.1856L19.3027 5.9053Z" fill="currentColor"/></svg>';
+const IC_X='<svg viewBox="0 0 24 24" fill="none"><path d="M17.9542 4.77253C18.3056 4.42106 18.8761 4.42106 19.2276 4.77253C19.579 5.12401 19.579 5.69452 19.2276 6.04597L13.2735 12.0001L19.2276 17.9542C19.5791 18.3056 19.5791 18.8761 19.2276 19.2276C18.8761 19.5791 18.3056 19.5791 17.9542 19.2276L12.0001 13.2735L6.04595 19.2276C5.69451 19.5791 5.12399 19.579 4.77252 19.2276C4.42104 18.8761 4.42104 18.3056 4.77252 17.9542L10.7266 12.0001L4.77252 6.04597C4.42104 5.6945 4.42104 5.124 4.77252 4.77253C5.12399 4.42107 5.69448 4.42106 6.04595 4.77253L12.0001 10.7266L17.9542 4.77253Z" fill="currentColor"/></svg>';
+
+
+let AC=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(AC&&AC.state==="suspended"){AC.resume();}return AC;}
+function tick(){
+  const ctx=ac();if(!ctx)return;
+  const t=ctx.currentTime;
+  const len=Math.floor(ctx.sampleRate*0.03);
+  const buf=ctx.createBuffer(1,len,ctx.sampleRate);
+  const d=buf.getChannelData(0);
+  for(let i=0;i<len;i++){d[i]=(Math.random()*2-1)*(1-i/len);}
+  const src=ctx.createBufferSource();src.buffer=buf;
+  const bp=ctx.createBiquadFilter();bp.type="bandpass";bp.frequency.value=2600;bp.Q.value=1.2;
+  const g=ctx.createGain();
+  g.gain.setValueAtTime(0.6,t);
+  g.gain.exponentialRampToValueAtTime(0.001,t+0.05);
+  src.connect(bp);bp.connect(g);g.connect(ctx.destination);
+  src.start(t);src.stop(t+0.06);
+}
+function chime(){
+  const ctx=ac();if(!ctx)return;
+  const t=ctx.currentTime;
+  [[880,0],[1174.66,0.12],[1567.98,0.24]].forEach(function(n){
+    const o=ctx.createOscillator();o.type="sine";o.frequency.value=n[0];
+    const g=ctx.createGain();
+    g.gain.setValueAtTime(0.0001,t+n[1]);
+    g.gain.exponentialRampToValueAtTime(0.25,t+n[1]+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+n[1]+0.35);
+    o.connect(g);g.connect(ctx.destination);
+    o.start(t+n[1]);o.stop(t+n[1]+0.4);
+  });
+}
+function renderStats(){const n=cards.filter(c=>!c.r).length;$("rlStats").textContent=cards.length+" cartões · "+n+" ainda não sorteados";}
+
+function renderCard(){
+  const el=$("rlCard");
+  if(!cards.length){el.innerHTML='<div class="rl-empty">Nenhum cartão. Adicione um abaixo.</div>';return;}
+  if(!current){
+    el.innerHTML='<div class="rl-empty">Gire a roleta para sortear um cartão de conversa.<br><span style="font-size:12px">Cartões já sorteados ficam com chance bem menor de cair de novo.</span></div>';
+    return;
+  }
+  const c=cards.find(x=>x.id===current);
+  if(!c){current=null;renderCard();return;}
+  el.innerHTML=
+    '<span class="rl-chip">'+esc(c.cat)+'</span>'+
+    '<p class="rl-q">'+esc(c.text)+'</p>'+
+    '<div class="rl-meta">chance atual de cair: <b>'+pct(c)+'</b>'+(c.r?' · já sorteado (chance reduzida)':'')+'</div>'+
+    '<div class="rl-cardacts">'+
+      '<button class="rl-mini" onclick="startEdit('+c.id+')" title="Editar">'+IC_EDIT+'</button>'+
+      '<button class="rl-mini danger" onclick="delCard('+c.id+')" title="Remover">'+IC_MINUS+'</button>'+
+    '</div>';
+}
+
+function pick(){
+  const t=totalW();let r=Math.random()*t;
+  for(const c of cards){r-=weight(c);if(r<=0)return c;}
+  return cards[cards.length-1];
+}
+
+window.spin=function(){
+  if(spinning||!cards.length)return;
+  spinning=true;$("rlSpin").disabled=true;
+  const el=$("rlCard");
+  el.classList.add("rl-cycling");
+  let delay=45,steps=0;
+  function cycle(){
+    if(steps>0&&delay>300){
+      el.classList.remove("rl-cycling");
+      const c=pick();
+      c.r=true;current=c.id;save();
+      chime();
+      renderStats();renderCard();renderRows();
+      el.classList.add("pop");
+      setTimeout(()=>el.classList.remove("pop"),350);
+      spinning=false;$("rlSpin").disabled=false;
+      return;
+    }
+    const rnd=cards[Math.floor(Math.random()*cards.length)];
+    el.innerHTML='<span class="rl-chip">'+esc(rnd.cat)+'</span><p class="rl-q">'+esc(rnd.text)+'</p>';
+    tick();
+    steps++;delay*=1.22;
+    setTimeout(cycle,delay);
+  }
+  cycle();
+};
+
+window.startEdit=function(id){
+  const c=cards.find(x=>x.id===id);if(!c)return;
+  const el=$("rlCard");
+  if(current!==id){current=id;renderCard();}
+  el.innerHTML=
+    '<span class="rl-chip">'+esc(c.cat)+'</span>'+
+    '<div class="rl-edit"><textarea id="rlEditTxt">'+esc(c.text)+'</textarea></div>'+
+    '<div class="rl-editrow">'+
+      '<button class="rl-btn primary" onclick="saveEdit('+id+')">'+IC_CHECK+' Salvar</button>'+
+      '<button class="rl-btn" onclick="cancelEdit()">'+IC_X+' Cancelar</button>'+
+    '</div>';
+};
+window.saveEdit=function(id){
+  const c=cards.find(x=>x.id===id);if(!c)return;
+  const v=$("rlEditTxt").value.trim();
+  if(v){c.text=v;save();}
+  renderCard();renderRows();
+};
+window.cancelEdit=function(){renderCard();};
+
+window.delCard=function(id){
+  cards=cards.filter(c=>c.id!==id);
+  if(current===id)current=null;
+  save();renderStats();renderCard();renderRows();
+};
+
+window.resetAll=function(){
+  if(!confirm("Reiniciar tudo? Todos os cartões voltam a ter a mesma chance de cair."))return;
+  cards.forEach(c=>c.r=false);current=null;save();
+  renderStats();renderCard();renderRows();
+};
+
+window.addCard=function(){
+  const t=$("rlNewText").value.trim();
+  if(!t)return;
+  cards.push({id:uid++,cat:$("rlNewCat").value,text:t,r:false});
+  $("rlNewText").value="";
+  save();renderStats();renderRows();
+};
+
+function fillSelects(){
+  const cats=[...new Set(cards.map(c=>c.cat))];
+  $("rlNewCat").innerHTML=cats.map(c=>'<option>'+esc(c)+'</option>').join("");
+  $("rlFilter").innerHTML='<option value="">Todas as categorias</option>'+cats.map(c=>'<option>'+esc(c)+'</option>').join("");
+}
+
+window.renderRows=function(){
+  const f=$("rlFilter").value;
+  const rows=cards.filter(c=>!f||c.cat===f);
+  $("rlRows").innerHTML=rows.map(c=>
+    '<div class="rl-row">'+
+      '<div class="rl-rowtxt'+(c.r?' read':'')+'"><span class="cat">'+esc(c.cat)+'</span>'+esc(c.text)+'</div>'+
+      '<div class="rl-chance">'+pct(c)+'</div>'+
+      '<div class="rl-rowacts">'+
+        '<button class="rl-mini" onclick="startEdit('+c.id+')" title="Editar">'+IC_EDIT+'</button>'+
+        '<button class="rl-mini danger" onclick="delCard('+c.id+')" title="Remover">'+IC_MINUS+'</button>'+
+      '</div>'+
+    '</div>').join("")||'<div class="rl-empty">Nenhum cartão nesta categoria.</div>';
+};
+
+$("rlSpin").onclick=function(){ac();spin();};
+$("rlRulesBtn").onclick=function(){$("rlModal").classList.add("open");};
+$("rlModalClose").onclick=function(){$("rlModal").classList.remove("open");};
+$("rlModal").onclick=function(e){if(e.target===$("rlModal"))$("rlModal").classList.remove("open");};
+document.addEventListener("keydown",function(e){if(e.key==="Escape")$("rlModal").classList.remove("open");});
+$("rlReset").onclick=resetAll;
+$("rlAddBtn").onclick=addCard;
+$("rlFilter").onchange=renderRows;
+
+fillSelects();renderStats();renderCard();renderRows();
+</script>
+
+</body>
+</html>
